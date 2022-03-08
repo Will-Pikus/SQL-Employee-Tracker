@@ -13,7 +13,7 @@ VALUES ("Branch Manager", 100000, 1),
        ("Human Resources Representitive", 60000, 5);
 
 INSERT INTO employee (first_name, last_name, manager_id, role_id)
-VALUES ("Michael", "Scott", 1, 1),
+VALUES ("Michael", "Scott", NULL, 1),
        ("Jim", "Halpert", 1, 2),
        ("Dwight", "Schrute", 1, 2),
        ("Stanley", "Hudson", 1, 2),
