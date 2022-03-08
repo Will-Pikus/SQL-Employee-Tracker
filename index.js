@@ -1,16 +1,13 @@
 const inquirer = require("inquirer");
 const mysql = require('mysql2');
-const cTable = require("console.table");
+require("console.table");
+const { type } = require("os");
 
-// const PORT = process.env.PORT || 3001;
-
-// Connect to database
+// Connect to SQL database
 const db = mysql.createConnection(
   {
     host: 'localhost',
-    // MySQL username,
     user: 'root',
-    // TODO: Add MySQL password here
     password: 'Bellingham@123!',
     database: 'employees_db'
   },
@@ -18,7 +15,7 @@ const db = mysql.createConnection(
   startApp()
 );
 
-//What the user will first see once logged into node
+//Start Menu 
 function startApp() {
     inquirer
       .prompt({
@@ -62,7 +59,7 @@ function startApp() {
             updateEmployee();
             break;
           default:
-            // quit();
+            quit();
         }
     });
 }
@@ -98,8 +95,112 @@ function viewEmployees() {
     });
 }
 
+// Add Department
+function addDepartment() {
+
+  inquirer.prompt({
+    type: "input",
+    message: "Please enter the name of the department",
+    name: "deptName"
+
+  }).then(function(res){
+
+    db.query("INSERT INTO department (name) VALUES (?)", [res.deptName], function(err, res) {
+        if (err) throw err;
+        console.table(res);
+        startApp();
+    });
+  });
+}
+
+// Add Role
+function addRole() {
+
+  inquirer.prompt([
+  {
+    type: "input",
+    message: "Please enter the name of the role.",
+    name: "roleName"
+  },
+  {
+    type: "input",
+    message: "Please enter the salary for the role.",
+    name: "roleSalary"
+  },
+  {
+    type: "input",
+    message: "Please enter the department ID for the role.",
+    name: "roleDeptID"
+  }
+  ]).then(function(res){
+
+    db.query("INSERT INTO role (title, salary, department_id) VALUES (?,?,?)", [res.roleName, res.roleSalary, res.roleDeptID], function(err, res) {
+        if (err) throw err;
+        console.table(res);
+        startApp();
+    });
+  });
+}
+
+// Add Employee
+function addEmployee() {
+
+  inquirer.prompt([
+  {
+    type: "input",
+    message: "Please enter the first name of the emplpoyee.",
+    name: "empFirstName"
+  },
+  {
+    type: "input",
+    message: "Please enter the last name of the employee.",
+    name: "empLastName"
+  },
+  {
+    type: "input",
+    message: "Please enter the role ID for the employee.",
+    name: "empRoleID"
+  },
+  {
+    type: "input",
+    message: "Please enter the manager ID for the employee.",
+    name: "empManagerID"
+  }
+  ]).then(function(res){
+
+    db.query("INSERT INTO employee (first_name, last_name, manager_id, role_id) VALUES (?,?,?,?)", [res.empFirstName, res.empLastName, res.empManagerID, res.empRoleID], function(err, res) {
+        if (err) throw err;
+        console.table(res);
+        startApp();
+    });
+  });
+}
+
+// Update Employee Role
+function updateEmployee() {
+
+  inquirer.prompt([
+  {
+    type: "input",
+    message: "Please enter the ID of the employee to update.",
+    name: "empID"
+  },
+  {
+    type: "input",
+    message: "Please enter the new role ID for the employee.",
+    name: "newRoleID"
+  }
+  ]).then(function(res){
+
+    db.query("UPDATE employee SET role_id = ? WHERE id = ?", [res.newRoleID, res.empID], function(err, res) {
+        if (err) throw err;
+        console.table(res);
+        startApp();
+    });
+  });
+}
+
 // Exit 
 function quit() {
-    connection.end();
     process.exit();
 }
